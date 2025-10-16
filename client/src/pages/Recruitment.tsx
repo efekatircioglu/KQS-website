@@ -1,11 +1,21 @@
+import React, { useState } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import ApplyNow from "@/components/ApplyNow";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Briefcase, Clock, MapPin, Users } from "lucide-react";
+import { Briefcase, MapPin, Users } from "lucide-react";
 
 const Recruitment = () => {
+  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
+  const [selectedJobTitle, setSelectedJobTitle] = useState<string>("");
+
+  const handleApplyClick = (jobTitle: string) => {
+    setSelectedJobTitle(jobTitle);
+    setIsApplyModalOpen(true);
+  };
+
   const roles = [
     {
       title: "Quantitative Researcher",
@@ -57,7 +67,7 @@ const Recruitment = () => {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12 animate-fade-in">
               <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-                Join Our Team
+                Join Us
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Be part of a community of talented quantitative researchers, traders, and data scientists pushing the boundaries of quantitative finance.
@@ -96,7 +106,7 @@ const Recruitment = () => {
             <div className="space-y-6">
               {roles.map((role, index) => (
                 <Card 
-                  key={index} 
+                  key={role.title} 
                   className="animate-fade-in hover:shadow-lg transition-all duration-300"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
@@ -123,13 +133,18 @@ const Recruitment = () => {
                     <h4 className="font-semibold mb-2">Requirements:</h4>
                     <ul className="space-y-1 text-sm text-muted-foreground mb-4">
                       {role.requirements.map((req, idx) => (
-                        <li key={idx} className="flex items-start gap-2">
+                        <li key={`${role.title}-req-${idx}`} className="flex items-start gap-2">
                           <span className="text-primary mt-1">•</span>
                           <span>{req}</span>
                         </li>
                       ))}
                     </ul>
-                    <Button variant="default">Apply Now</Button>
+                    <Button 
+                      variant="default" 
+                      onClick={() => handleApplyClick(role.title)}
+                    >
+                      Apply Now
+                    </Button>
                   </CardContent>
                 </Card>
               ))}
@@ -139,6 +154,13 @@ const Recruitment = () => {
       </div>
 
       <Footer />
+
+      {/* Apply Now Modal */}
+      <ApplyNow
+        isOpen={isApplyModalOpen}
+        onClose={() => setIsApplyModalOpen(false)}
+        jobTitle={selectedJobTitle}
+      />
     </div>
   );
 };

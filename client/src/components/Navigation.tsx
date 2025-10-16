@@ -38,7 +38,7 @@ const Navigation = () => {
   const pageNavItems = [
     { name: "Services", path: "/services" },
     { name: "Newsletter", path: "/newsletter" },
-    { name: "Recruitment", path: "/recruitment" },
+    { name: "Join Us", path: "/join-us" },
   ];
 
   const handleHomeDropdownClick = (item: typeof homeDropdownItems[0]) => {
