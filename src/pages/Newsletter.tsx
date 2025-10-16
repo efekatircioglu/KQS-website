@@ -39,7 +39,7 @@ const Newsletter = () => {
                 Quant Research Newsletter
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Stay updated with our latest quantitative research, market insights, and cutting-edge analysis from the Kings Quant Society team.
+                Stay updated with our latest quantitative research, market insights, and cutting-edge analysis from the King's Quant Society team.
               </p>
             </div>
 

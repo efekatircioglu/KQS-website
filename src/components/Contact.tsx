@@ -22,19 +22,25 @@ const Contact = () => {
                 icon: Mail,
                 title: "Email Us",
                 description: "Get in touch with our team",
-                action: "kqs@kcl.ac.uk",
+                action: "contact@kingsquant.com",
+                type: "email",
+                href: "mailto:contact@kingsquant.com?subject=Inquiry from KQS Website&body=Hello KQS Team,%0D%0A%0D%0AI would like to get in touch regarding...",
               },
               {
                 icon: Users,
                 title: "Join Us",
                 description: "Become a member",
                 action: "Apply Now",
+                type: "button",
+                href: "https://www.kclsu.org/groups/activities/join/group/kings_quant_society/",
               },
               {
                 icon: Calendar,
                 title: "Events",
                 description: "Attend our workshops",
                 action: "View Schedule",
+                type: "button",
+                href: "https://www.instagram.com/kingsquantsociety/",
               },
             ].map((item, index) => (
               <Card 
@@ -52,12 +58,24 @@ const Contact = () => {
                   <p className="text-muted-foreground mb-4">
                     {item.description}
                   </p>
-                  <Button 
-                    variant="outline"
-                    className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300"
-                  >
-                    {item.action}
-                  </Button>
+                  {item.type === "email" ? (
+                    <a
+                      href={item.href}
+                      className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-primary bg-background text-primary hover:bg-primary hover:text-primary-foreground h-10 px-4 py-2 transition-all duration-300"
+                    >
+                      {item.action}
+                    </a>
+                  ) : (
+                    <Button 
+                      variant="outline"
+                      className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+                      asChild
+                    >
+                      <a href={item.href} target="_blank" rel="noopener noreferrer">
+                        {item.action}
+                      </a>
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             ))}

@@ -33,7 +33,7 @@ const About = () => {
             Our Mission
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            At Kings Quant Society, we foster a culture of systematic thinking and quantitative excellence. 
+            At King's Quant Society, we foster a culture of systematic thinking and quantitative excellence. 
             We are dedicated to developing the technical skills and analytical mindset required to excel in 
             quantitative finance, empowering our members to become the next generation of quant analysts and traders.
           </p>

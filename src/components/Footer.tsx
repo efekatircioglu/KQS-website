@@ -11,7 +11,7 @@ const Footer = () => {
           <div>
             <Link to="/" className="flex items-center gap-3 mb-4">
               <img src={logo} alt="KQS Logo" className="h-10 w-10" />
-              <span className="text-lg font-bold text-foreground">Kings Quant Society</span>
+              <span className="text-lg font-bold text-foreground">King's Quant Society</span>
             </Link>
             <p className="text-muted-foreground text-sm">
               King's College London's premier quantitative trading society, 
@@ -56,7 +56,7 @@ const Footer = () => {
 
         <div className="pt-8 border-t border-border text-center">
           <p className="text-muted-foreground text-sm">
-            © {currentYear} Kings Quant Society. All rights reserved.
+            © {currentYear} King's Quant Society. All rights reserved.
           </p>
         </div>
       </div>
