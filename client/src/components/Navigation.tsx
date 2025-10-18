@@ -30,12 +30,12 @@ const Navigation = () => {
   const homeDropdownItems = [
     { name: "Home", path: "/", sectionId: "home", isHome: true },
     { name: "About", path: "#about", sectionId: "about", isHome: false },
-    { name: "Portfolio", path: "#portfolio", sectionId: "portfolio", isHome: false },
     { name: "Contact", path: "#contact", sectionId: "contact", isHome: false },
   ];
 
   // Separate page navigation items
   const pageNavItems = [
+    { name: "Portfolio", path: "/portfolio" },
     { name: "Services", path: "/services" },
     { name: "Newsletter", path: "/newsletter" },
     { name: "Join Us", path: "/join-us" },
@@ -57,7 +57,7 @@ const Navigation = () => {
       return;
     }
     
-    // Handle other hash links (About, Portfolio, Contact)
+    // Handle other hash links (About, Contact)
     if (item.sectionId) {
       if (location.pathname === "/") {
         // On home page, smooth scroll to section

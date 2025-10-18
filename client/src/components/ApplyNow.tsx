@@ -5,13 +5,14 @@ import { Textarea } from './ui/textarea';
 import { Label } from './ui/label';
 import { Alert, AlertDescription } from './ui/alert';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
-import { CheckCircle, AlertCircle, Send } from 'lucide-react';
+import { CheckCircle, AlertCircle, Send, Upload, FileText, X } from 'lucide-react';
 
 interface FormData {
   name: string;
   email: string;
   subject: string;
   message: string;
+  cv: File | null;
 }
 
 interface FormErrors {
@@ -19,6 +20,7 @@ interface FormErrors {
   email?: string;
   subject?: string;
   message?: string;
+  cv?: string;
 }
 
 interface ApplyNowProps {
@@ -32,7 +34,8 @@ const ApplyNow: React.FC<ApplyNowProps> = ({ isOpen, onClose, jobTitle }) => {
     name: '',
     email: '',
     subject: jobTitle || '',
-    message: ''
+    message: '',
+    cv: null
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -46,7 +49,8 @@ const ApplyNow: React.FC<ApplyNowProps> = ({ isOpen, onClose, jobTitle }) => {
         name: '',
         email: '',
         subject: jobTitle || '',
-        message: ''
+        message: '',
+        cv: null
       });
       setErrors({});
       setIsSubmitted(false);
@@ -78,6 +82,21 @@ const ApplyNow: React.FC<ApplyNowProps> = ({ isOpen, onClose, jobTitle }) => {
     // Message validation - Optional, no length restriction
     // No validation needed for optional message field
 
+    // CV validation - REQUIRED
+    if (formData.cv) {
+      // Check file type
+      const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      if (!allowedTypes.includes(formData.cv.type)) {
+        newErrors.cv = 'Please upload a PDF or Word document';
+      }
+      // Check file size (max 5MB)
+      if (formData.cv.size > 5 * 1024 * 1024) {
+        newErrors.cv = 'File size must be less than 5MB';
+      }
+    } else {
+      newErrors.cv = 'CV upload is required';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -96,6 +115,29 @@ const ApplyNow: React.FC<ApplyNowProps> = ({ isOpen, onClose, jobTitle }) => {
         [name]: undefined
       }));
     }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setFormData(prev => ({
+      ...prev,
+      cv: file
+    }));
+
+    // Clear error when user selects a file
+    if (errors.cv) {
+      setErrors(prev => ({
+        ...prev,
+        cv: undefined
+      }));
+    }
+  };
+
+  const removeCV = () => {
+    setFormData(prev => ({
+      ...prev,
+      cv: null
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -136,8 +178,8 @@ const ApplyNow: React.FC<ApplyNowProps> = ({ isOpen, onClose, jobTitle }) => {
           </DialogTitle>
           <DialogDescription className="text-center">
             {jobTitle 
-              ? `Join our team as a ${jobTitle} and be part of the Kings Quant Society.`
-              : 'Join the Kings Quant Society and be part of our community of quantitative finance enthusiasts.'
+              ? `Join our team as a ${jobTitle} and be part of the King's Quant Society.`
+              : 'Join the King\'s Quant Society and be part of our community of quantitative finance enthusiasts.'
             }
           </DialogDescription>
         </DialogHeader>
@@ -243,10 +285,69 @@ const ApplyNow: React.FC<ApplyNowProps> = ({ isOpen, onClose, jobTitle }) => {
             )}
           </div>
 
+          {/* CV Upload Field */}
+          <div className="space-y-2">
+            <Label htmlFor="cv">CV Upload * <span className="text-red-500">(Required)</span></Label>
+            <div className="space-y-3">
+              {formData.cv ? (
+                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <FileText className="h-5 w-5 text-primary" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">{formData.cv.name}</p>
+                        <p className="text-xs text-gray-500">
+                          {(formData.cv.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={removeCV}
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary transition-colors duration-200">
+                  <input
+                    type="file"
+                    id="cv"
+                    name="cv"
+                    accept=".pdf,.doc,.docx"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                  <label htmlFor="cv" className="cursor-pointer">
+                    <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                    <p className="text-sm text-gray-600 mb-1">
+                      <span className="text-primary font-medium">Click to upload</span> or drag and drop
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      PDF, DOC, DOCX (max 5MB)
+                    </p>
+                  </label>
+                </div>
+              )}
+            </div>
+            {errors.cv && (
+              <Alert className="border-red-200 bg-red-50 p-2">
+                <AlertCircle className="h-4 w-4 text-red-600" />
+                <AlertDescription className="text-red-800 text-sm">
+                  {errors.cv}
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
+
           {/* Submit Button */}
           <Button
             type="submit"
-            disabled={isSubmitting || !formData.name.trim() || !formData.email.trim()}
+            disabled={isSubmitting || !formData.name.trim() || !formData.email.trim() || !formData.cv}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
