@@ -7,6 +7,9 @@ import { Alert, AlertDescription } from './ui/alert';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
 import { CheckCircle, AlertCircle, Send, Upload, FileText, X } from 'lucide-react';
 
+// Replace with your actual Google Apps Script Web App URL
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/home/projects/1l0Q1ZrSH5OE3ITVenSeEmtNLxUafQ-JD0TcjDBh89eFr8AiAn_Xlvz02/edit';
+
 interface FormData {
   name: string;
   email: string;
@@ -21,6 +24,7 @@ interface FormErrors {
   subject?: string;
   message?: string;
   cv?: string;
+  submit?: string;
 }
 
 interface ApplyNowProps {
@@ -150,20 +154,53 @@ const ApplyNow: React.FC<ApplyNowProps> = ({ isOpen, onClose, jobTitle }) => {
     setIsSubmitting(true);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Here you would typically send the data to your backend
-      console.log('Form submitted:', formData);
-      
+      // Convert CV to Base64
+      const base64File = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(formData.cv);
+      });
+
+      // Prepare payload
+      const payload = {
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+        fileName: formData.cv.name,
+        file: base64File
+      };
+
+      // Send to Google Apps Script
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.error || 'Submission failed');
+      }
+
       setIsSubmitted(true);
       
-      // Close modal after 3 seconds
+      // Close modal after 3 seconds (existing behavior)
       setTimeout(() => {
         onClose();
       }, 3000);
     } catch (error) {
       console.error('Error submitting form:', error);
+      // Show error to user - add error state
+      setErrors(prev => ({
+        ...prev,
+        submit: error instanceof Error ? error.message : 'Failed to submit application. Please try again.'
+      }));
     } finally {
       setIsSubmitting(false);
     }
@@ -343,6 +380,16 @@ const ApplyNow: React.FC<ApplyNowProps> = ({ isOpen, onClose, jobTitle }) => {
               </Alert>
             )}
           </div>
+
+          {/* Submit Error Alert */}
+          {errors.submit && (
+            <Alert className="border-red-200 bg-red-50 p-3">
+              <AlertCircle className="h-4 w-4 text-red-600" />
+              <AlertDescription className="text-red-800 text-sm">
+                {errors.submit}
+              </AlertDescription>
+            </Alert>
+          )}
 
           {/* Submit Button */}
           <Button

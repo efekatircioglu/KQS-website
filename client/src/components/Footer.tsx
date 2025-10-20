@@ -40,10 +40,10 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <a 
-                  href="mailto:kqs@kcl.ac.uk"
+                  href="mailto:contact@kingsquant.com"
                   className="text-muted-foreground hover:text-primary transition-colors duration-300"
                 >
-                  kqs@kcl.ac.uk
+                  contact@kingsquant.com
                 </a>
               </li>
               <li className="text-muted-foreground text-sm">
